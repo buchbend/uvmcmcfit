@@ -18,7 +18,7 @@ the:
 
 import os
 from astropy.io import fits
-import visualutil
+import .visualutil
 #import sys
 #cwd = os.getcwd()
 #sys.path.append(cwd)
@@ -89,7 +89,7 @@ def evolvePDF(bestfitloc='posteriorpdf.fits', stepsize=50000):
 
     """
 
-    import setuputil
+    import .setuputil
 
 
     # Get upper and lower limits on the parameters to set the plot limits
@@ -125,7 +125,7 @@ def covariance(bestfitloc='posteriorpdf.fits'):
     import matplotlib.pyplot as plt
     import numpy
     from pylab import savefig
-    import modifypdf
+    import .modifypdf
     from astropy.table import Table
     from matplotlib import rc
 
@@ -256,7 +256,7 @@ def goodFits(bestfitloc='posteriorpdf.fits', Nfits=12, Ngood=5000,
     
     """
 
-    import modifypdf
+    import .modifypdf
     import numpy
 
 

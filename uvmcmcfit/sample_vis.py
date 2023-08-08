@@ -20,7 +20,7 @@ Ported from an IDL routine of the same name from Katherine Rosenfeld
 # import pyfits
 # import math
 # import ModGrid
-import grid
+import .grid
 import numpy as np
 
 # cimport np

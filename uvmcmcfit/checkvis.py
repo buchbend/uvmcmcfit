@@ -11,14 +11,14 @@ v, and w values as well.
 
 """
 
-import uvutil
+import .uvutil
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from pylab import savefig
 from subprocess import call
-import uvmodel
+import .uvmodel
 import os
 
 

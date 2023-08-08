@@ -7,16 +7,16 @@ Inspect a model with specific parameters defined in config_sandbox.py
 
 
 
-import visualutil
-import setuputil
+import .visualutil
+import .setuputil
 import yaml
 import numpy
-import lensutil
+import .lensutil
 import os
 from astropy.io import fits
 from subprocess import call
-import sample_vis
-import uvutil
+import .sample_vis
+import .uvutil
 
 
 def plot(cleanup=True, configloc='sandbox.yaml', interactive=True):

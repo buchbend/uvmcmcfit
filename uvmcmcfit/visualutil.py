@@ -11,7 +11,7 @@ def plotPDF(fitresults, tag, limits='', Ngood=5000, axes='auto'):
     import matplotlib.pyplot as plt
     from pylab import savefig
     from matplotlib import rc
-    import modifypdf
+    import .modifypdf
 
 
     # plotting parameters
@@ -93,10 +93,10 @@ def makeSBmap(config, fitresult):
 
     """
 
-    import lensutil
+    import .lensutil
     from astropy.io import fits
     import os
-    import setuputil
+    import .setuputil
     import re
     import numpy
 
@@ -226,7 +226,7 @@ def makeVis(config, miriad=False, idtag=''):
 
     """
 
-    import uvmodel
+    import .uvmodel
     import os
 
 
@@ -398,7 +398,7 @@ def makeImage(config, interactive=True, miriad=False, idtag=''):
 
     import os
     from astropy.io import fits
-    import miriadutil
+    import .miriadutil
 
         
     visfile = config['UVData']
@@ -597,7 +597,7 @@ def plotImage(model, data, config, modeltype, fitresult, tag=''):
     import matplotlib.pyplot as plt
     from matplotlib.patches import Ellipse
     from pylab import savefig
-    import setuputil
+    import .setuputil
     import re
 
     # set font properties
@@ -987,7 +987,7 @@ def preProcess(config, paramData, fitresult, tag='', cleanup=True,
 
     """
 
-    import setuputil
+    import .setuputil
     import numpy
     import re
 

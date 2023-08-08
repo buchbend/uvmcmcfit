@@ -77,14 +77,14 @@ import time
 from subprocess import call
 
 import emcee
-import lensutil
+import .lensutil
 import numpy
 
 # import pyximport
 # pyximport.install(setup_args={"include_dirs":numpy.get_include()})
-import sample_vis
-import setuputil
-import uvutil
+import .sample_vis
+import .setuputil
+import .uvutil
 import yaml
 from astropy.io import fits
 from astropy.table import Table
