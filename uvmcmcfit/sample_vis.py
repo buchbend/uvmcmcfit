@@ -20,8 +20,9 @@ Ported from an IDL routine of the same name from Katherine Rosenfeld
 # import pyfits
 # import math
 # import ModGrid
-import .grid
 import numpy as np
+
+from . import grid
 
 # cimport np
 
