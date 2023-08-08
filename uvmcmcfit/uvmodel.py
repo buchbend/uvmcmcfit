@@ -14,7 +14,7 @@ Outputs:
     visheader: uvfits header for model
 """
 
-from __future__ import print_function
+
 
 from astropy.io import fits
 import numpy

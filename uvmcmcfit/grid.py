@@ -1,7 +1,7 @@
 # - return gridding correction for Mr. Schwab's optimal gridding system
 # - Essentially a transription of grid.for
 
-from __future__ import print_function
+
 
 import numpy
 import math

@@ -59,7 +59,7 @@ def savePlots(names, nfigures, colors):
             plt.setp(text, color = color)
         plt.tight_layout()
         savefig('viscompare_' + name + '.pdf')
-        print("Finished saving " + name + " figure!")
+        print(("Finished saving " + name + " figure!"))
 
 def iterFig(uvmcmcfitFile, miriadFile):
 

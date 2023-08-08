@@ -14,7 +14,7 @@ the:
 
 """
 
-from __future__ import print_function
+
 
 import os
 from astropy.io import fits
@@ -231,7 +231,7 @@ def bestFit(bestfitloc='posteriorpdf.fits', showOptical=False, cleanup=True,
     fitresults = fits.getdata(bestfitloc)
 
     from astropy.table import Table
-    fitKeys = Table.read(bestfitloc).keys()
+    fitKeys = list(Table.read(bestfitloc).keys())
 
     # identify best-fit model
     minchi2 = fitresults['lnprob'].max()
@@ -268,7 +268,7 @@ def goodFits(bestfitloc='posteriorpdf.fits', Nfits=12, Ngood=5000,
     
     # get keys
     from astropy.table import Table
-    fitKeys = Table.read(bestfitloc).keys()
+    fitKeys = list(Table.read(bestfitloc).keys())
 
     # select the random realizations model
     Nunprune = len(fitresults)

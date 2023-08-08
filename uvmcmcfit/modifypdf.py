@@ -8,7 +8,7 @@ functions.
 
 """
 
-from __future__ import print_function
+
 
 from astropy.table import Table
 import numpy
@@ -48,7 +48,7 @@ def goodMu(PDFdata):
 def cleanColumns(PDFdata):
 
     # get the last niters iterations
-    PDFkeys = PDFdata.keys()
+    PDFkeys = list(PDFdata.keys())
     for key in PDFkeys:
         rms = numpy.std(PDFdata[key])
         if rms == 0:

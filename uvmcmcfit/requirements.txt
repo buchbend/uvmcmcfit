@@ -1,0 +1,10 @@
+astropy
+emcee
+emcee
+matplotlib
+numpy
+os
+pdb
+pylab
+taskinit
+yaml

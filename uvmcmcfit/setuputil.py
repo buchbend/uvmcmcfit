@@ -15,13 +15,13 @@ def loadParams(config):
     nwalkers = config['Nwalkers']
 
     # Determine method of computing lnlike
-    if config.keys().count('LogLike') > 0:
+    if list(config.keys()).count('LogLike') > 0:
         lnlikemethod = config['LogLike']
     else:
         lnlikemethod = 'MLE'
 
     # determine the number of regions for which we need surface brightness maps
-    configkeys = config.keys()
+    configkeys = list(config.keys())
     configkeystring = " ".join(configkeys)
     regionlist = re.findall('Region.', configkeystring)
     nregions = len(regionlist)
@@ -51,13 +51,13 @@ def loadParams(config):
         ra_centroid = cfdr['RACentroid']
         dec_centroid = cfdr['DecCentroid']
         extent = cfdr['RadialExtent']
-        if cfdr.keys().count('Oversample') > 0:
+        if list(cfdr.keys()).count('Oversample') > 0:
             oversample = cfdr['Oversample']
         else:
             oversample = 1
 
         # count the number of lenses
-        configkeys = cfdr.keys()
+        configkeys = list(cfdr.keys())
         configkeystring = " ".join(configkeys)
         lenslist = re.findall('Lens.', configkeystring)
         nlens = len(lenslist)
@@ -137,7 +137,7 @@ def loadParams(config):
                 p1.append(limits[1]) 
 
                 # store the shape of the priors
-                configkeys = cfdrlp.keys()
+                configkeys = list(cfdrlp.keys())
                 configkeystring = " ".join(configkeys)
                 priorshapelist = re.findall('PriorShape', configkeystring)
                 npriorshape = len(priorshapelist)
@@ -191,7 +191,7 @@ def loadParams(config):
                 p1.append(limits[1]) 
 
                 # store the shape of the priors
-                configkeys = cfdrsp.keys()
+                configkeys = list(cfdrsp.keys())
                 configkeystring = " ".join(configkeys)
                 priorshapelist = re.findall('PriorShape', configkeystring)
                 npriorshape = len(priorshapelist)
@@ -211,7 +211,7 @@ def loadParams(config):
                 pname.append(nametag)
 
             # get the model type
-            if cfdrs.keys().count('LightProfile') > 0:
+            if list(cfdrs.keys()).count('LightProfile') > 0:
                 model_types_source.append(cfdrs['LightProfile'])
             else:
                 model_types_source.append('Gaussian')
@@ -303,7 +303,7 @@ def makeMask(config):
     mask[yr0:yr1, xr0:xr1] = 0
 
     # determine the number of regions for which we need surface brightness maps
-    configkeys = config.keys()
+    configkeys = list(config.keys())
     configkeystring = " ".join(configkeys)
     regionlist = re.findall('Region.', configkeystring)
     for region in regionlist:

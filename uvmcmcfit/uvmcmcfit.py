@@ -68,7 +68,7 @@
 
 """
 
-from __future__ import print_function
+
 
 # import the required modules
 import os
@@ -347,13 +347,13 @@ config = yaml.load(configfile)
 
 
 # Determine if we are going to compute the amplification of every model
-if config.keys().count('ComputeAmp') > 0:
+if list(config.keys()).count('ComputeAmp') > 0:
     computeamp = config['ComputeAmp']
 else:
     computeamp = True
 
 # Determine parallel processing options
-if config.keys().count('MPI') > 0:
+if list(config.keys()).count('MPI') > 0:
     mpi = config['MPI']
 else:
     mpi = False
@@ -377,7 +377,7 @@ if mpi:
 # Single processor with Nthreads cores
 else:
 
-    if config.keys().count('Nthreads') > 0:
+    if list(config.keys()).count('Nthreads') > 0:
         # set the number of threads to use for parallel processing
         Nthreads = config['Nthreads']
     else:
@@ -400,7 +400,7 @@ headim = fits.getheader(config['ImageName'])
 visfile = config['UVData']
 
 # Determine if we will use miriad to compute simulated visibilities
-if config.keys().count('UseMiriad') > 0:
+if list(config.keys()).count('UseMiriad') > 0:
     miriad = config['UseMiriad']
 
     if miriad == True:

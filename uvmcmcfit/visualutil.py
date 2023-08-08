@@ -48,7 +48,7 @@ def plotPDF(fitresults, tag, limits='', Ngood=5000, axes='auto'):
         rmsval = numpy.std(frg)
         if rmsval > 1e-6:
             avgval = numpy.mean(frg)
-            print(pname + ' = ' + str(avgval) + ' +/- ' + str(rmsval))
+            print((pname + ' = ' + str(avgval) + ' +/- ' + str(rmsval)))
             totalwidth = frg.max() - frg.min()
             nbins = totalwidth / rmsval * 5
             ax = plt.subplot(nrow, ncol, j)
@@ -109,7 +109,7 @@ def makeSBmap(config, fitresult):
     nlensedregions = paramData['nlensedregions']
     npar_previous = 0
 
-    configkeys = config.keys()
+    configkeys = list(config.keys())
     configkeystring = " ".join(configkeys)
     regionlist = re.findall('Region.', configkeystring)
     SBmap_all = 0
@@ -144,7 +144,7 @@ def makeSBmap(config, fitresult):
         allparameters = allparameters0 + parameters_offset
 
         # count the number of lenses
-        configkeys = cr.keys()
+        configkeys = list(cr.keys())
         configkeystring = " ".join(configkeys)
         lenslist = re.findall('Lens.', configkeystring)
         nlens = len(lenslist)
@@ -248,7 +248,7 @@ def makeVis(config, miriad=False, idtag=''):
             tag = '.miriad'
             DataMiriad = visname + tag
             if not os.path.exists(DataMiriad):
-                print("Creating new miriad data file: " + DataMiriad)
+                print(("Creating new miriad data file: " + DataMiriad))
                 os.system('rm -rf ' + DataMiriad)
                 command = 'fits op=uvin in=' + visfile + ' out=' + DataMiriad
                 os.system(command)
@@ -261,10 +261,10 @@ def makeVis(config, miriad=False, idtag=''):
                 from taskinit import tb
                 tb.open(visname + tag)
                 tb.close()
-                print "Found an existing CASA ms file."
+                print("Found an existing CASA ms file.")
             except RuntimeError:
-                print "No CASA ms file found, creating one from " + visname \
-                        + ".uvfits file."
+                print("No CASA ms file found, creating one from " + visname \
+                        + ".uvfits file.")
                 from casa import importuvfits
                 infile = visname + '.uvfits'
                 outfile = visname + '.ms'
@@ -326,10 +326,10 @@ def makeVis(config, miriad=False, idtag=''):
                 from taskinit import tb
                 tb.open(visname + tag)
                 tb.close()
-                print "Found an existing CASA ms file."
+                print("Found an existing CASA ms file.")
             except RuntimeError:
-                print "No CASA ms file found, creating one from " + visname \
-                        + ".uvfits file."
+                print("No CASA ms file found, creating one from " + visname \
+                        + ".uvfits file.")
                 from casa import importuvfits
                 infile = visname + '.uvfits'
                 outfile = visname + '.ms'
@@ -616,7 +616,7 @@ def plotImage(model, data, config, modeltype, fitresult, tag=''):
     nlensedregions = paramData['nlensedregions']
     npar_previous = 0
 
-    configkeys = config.keys()
+    configkeys = list(config.keys())
     configkeystring = " ".join(configkeys)
     regionlist = re.findall('Region.', configkeystring)
     nregion = len(regionlist)
@@ -652,7 +652,7 @@ def plotImage(model, data, config, modeltype, fitresult, tag=''):
         allparameters = allparameters0 + parameters_offset
 
         # count the number of lenses
-        configkeys = cr.keys()
+        configkeys = list(cr.keys())
         configkeystring = " ".join(configkeys)
         lenslist = re.findall('Lens.', configkeystring)
         nlens = len(lenslist)
@@ -684,7 +684,7 @@ def plotImage(model, data, config, modeltype, fitresult, tag=''):
                     angle=source_pa, ec='white', lw=0.5, fc='magenta', \
                     zorder=2, fill=True, alpha=0.5)
             ax.add_artist(e)
-            if config.keys().count('xtextoff') > 0:
+            if list(config.keys()).count('xtextoff') > 0:
                 xytext = (xxx + config['xtextoff'][i], 
                         yyy + config['ytextoff'][i])
                 if iregion == 0:
@@ -758,7 +758,7 @@ def plotImage(model, data, config, modeltype, fitresult, tag=''):
     datacut = im[totdy1:totdy2,totdx1:totdx2]
 
     # make cleaned model cutout
-    headerkeys = headmod.keys()
+    headerkeys = list(headmod.keys())
     cd1_1 = headerkeys.count('CD1_1')
     cd1_2 = headerkeys.count('CD1_2')
     if cd1_1 == 0:
@@ -935,7 +935,7 @@ def plotFit(config, fitresult, tag='', cleanup=True, showOptical=False,
         makeSBmap(config, fitresult)
 
         # are we using miriad to image the best-fit model?
-        if config.keys().count('UseMiriad') > 0:
+        if list(config.keys()).count('UseMiriad') > 0:
             miriad = config['UseMiriad']
             if miriad == 'Visualize':
                 miriad = True
@@ -997,7 +997,7 @@ def preProcess(config, paramData, fitresult, tag='', cleanup=True,
     nlensedregions = paramData['nlensedregions']
     npar_previous = 0
 
-    configkeys = config.keys()
+    configkeys = list(config.keys())
     configkeystring = " ".join(configkeys)
     regionlist = re.findall('Region.', configkeystring)
     for regioni, region in enumerate(regionlist):
@@ -1027,7 +1027,7 @@ def preProcess(config, paramData, fitresult, tag='', cleanup=True,
         allparameters = allparameters0 + parameters_offset
 
         # count the number of lenses
-        configkeys = cr.keys()
+        configkeys = list(cr.keys())
         configkeystring = " ".join(configkeys)
         lenslist = re.findall('Lens.', configkeystring)
         nlens = len(lenslist)

@@ -5,7 +5,7 @@ Inspect a model with specific parameters defined in config_sandbox.py
 """
 
 
-from __future__ import print_function
+
 
 import visualutil
 import setuputil

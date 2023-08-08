@@ -5,7 +5,7 @@ Shane Bussmann
 Varius utilities related to operations on uvfits data files.
 """
 
-from __future__ import print_function
+
 
 import numpy
 from astropy.io import fits

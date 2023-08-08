@@ -9,7 +9,8 @@ Convert config.py to config.yaml
 """
 
 import config
-reload(config)
+import importlib
+importlib.reload(config)
 import yaml
 
 

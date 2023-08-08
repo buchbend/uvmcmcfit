@@ -12,7 +12,7 @@ Ported from an IDL routine of the same name from Katherine Rosenfeld
  - See MIRIAD's ModMap in model.for
 """
 
-from __future__ import print_function, division
+
 
 # load constants and helper functions
 #@grid.pro
