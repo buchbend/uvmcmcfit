@@ -69,32 +69,32 @@
 """
 
 
-
 # import the required modules
 import os
 import os.path
 import sys
-from astropy.io import fits
-import numpy
-from astropy.table import Table
-import emcee
-#import pyximport
-#pyximport.install(setup_args={"include_dirs":numpy.get_include()})
-import sample_vis
-import lensutil
-import uvutil
-import setuputil
-import yaml
-from subprocess import call
 import time
+from subprocess import call
 
+import emcee
+import lensutil
+import numpy
 
-#cwd = os.getcwd()
-#sys.path.append(cwd)
-#import config
+# import pyximport
+# pyximport.install(setup_args={"include_dirs":numpy.get_include()})
+import sample_vis
+import setuputil
+import uvutil
+import yaml
+from astropy.io import fits
+from astropy.table import Table
+
+# cwd = os.getcwd()
+# sys.path.append(cwd)
+# import config
+
 
 def lnprior(pzero_regions, paramSetup):
-
     """
 
     Function that computes the ln prior probabilities of the model parameters.
@@ -106,10 +106,10 @@ def lnprior(pzero_regions, paramSetup):
         priorln = -numpy.inf
 
     # Uniform priors
-    uniform_regions = paramSetup['PriorShape'] == 'Uniform'
+    uniform_regions = paramSetup["PriorShape"] == "Uniform"
     if uniform_regions.any():
-        p_l_regions = paramSetup['p_l'][uniform_regions]
-        p_u_regions = paramSetup['p_u'][uniform_regions]
+        p_l_regions = paramSetup["p_l"][uniform_regions]
+        p_u_regions = paramSetup["p_u"][uniform_regions]
         pzero_uniform = pzero_regions[uniform_regions]
         priorln = 0
         mu = 1
@@ -119,33 +119,34 @@ def lnprior(pzero_regions, paramSetup):
             priorln = -numpy.inf
 
     # Gaussian priors
-    gaussian_regions = paramSetup['PriorShape'] == 'Gaussian'
+    gaussian_regions = paramSetup["PriorShape"] == "Gaussian"
     if gaussian_regions.any():
-    #ngaussian = paramSetup['prior_shape'][gaussian_regions].size
-    #for ipar in range(ngaussian):
-        mean_regions = paramSetup['p_l'][gaussian_regions]
-        rms_regions = paramSetup['p_u'][gaussian_regions]
-        #part1 = numpy.log(2 * numpy.pi * rms_regions ** 2)
+        # ngaussian = paramSetup['prior_shape'][gaussian_regions].size
+        # for ipar in range(ngaussian):
+        mean_regions = paramSetup["p_l"][gaussian_regions]
+        rms_regions = paramSetup["p_u"][gaussian_regions]
+        # part1 = numpy.log(2 * numpy.pi * rms_regions ** 2)
         parameter = pzero_regions[gaussian_regions]
-        #print(parameter - mean_regions, (parameter - mean_regions)/rms_regions)
-        part2 = (parameter - mean_regions) ** 2 / rms_regions ** 2
+        # print(parameter - mean_regions, (parameter - mean_regions)/rms_regions)
+        part2 = (parameter - mean_regions) ** 2 / rms_regions**2
         priorln = -2.5 * (part2).sum()
-        #priorln += priorln_param
+        # priorln += priorln_param
 
     return priorln, mu
 
 
-def lnlike(pzero_regions, vis_complex, wgt, uuu, vvv, pcd, 
-           fixindx, paramSetup, computeamp=True):
-    """ Function that computes the Ln likelihood of the data"""
+def lnlike(
+    pzero_regions, vis_complex, wgt, uuu, vvv, pcd, fixindx, paramSetup, computeamp=True
+):
+    """Function that computes the Ln likelihood of the data"""
 
     # search poff_models for parameters fixed relative to other parameters
     fixed = (numpy.where(fixindx >= 0))[0]
     nfixed = fixindx[fixed].size
-    p_u_regions = paramSetup['p_u']
+    p_u_regions = paramSetup["p_u"]
     poff_regions = p_u_regions.copy()
-    poff_regions[:] = 0.
-    #for ifix in range(nfixed):
+    poff_regions[:] = 0.0
+    # for ifix in range(nfixed):
     #    poff_regions[fixed[ifix]] = pzero_regions[fixindx[fixed[ifix]]]
     for ifix in range(nfixed):
         ifixed = fixed[ifix]
@@ -160,21 +161,20 @@ def lnlike(pzero_regions, vis_complex, wgt, uuu, vvv, pcd,
     npar_previous = 0
 
     amp = []  # Will contain the 'blobs' we compute
-    g_image_all = 0.
-    g_lensimage_all = 0.
-    e_image_all = 0.
-    e_lensimage_all = 0.
+    g_image_all = 0.0
+    g_lensimage_all = 0.0
+    e_image_all = 0.0
+    e_lensimage_all = 0.0
 
-    nregions = paramSetup['nregions']
+    nregions = paramSetup["nregions"]
     for regioni in range(nregions):
-
         # get the model info for this model
-        x = paramSetup['x'][regioni]
-        y = paramSetup['y'][regioni]
-        headmod = paramSetup['modelheader'][regioni]
-        nlens = paramSetup['nlens_regions'][regioni]
-        nsource = paramSetup['nsource_regions'][regioni]
-        model_types = paramSetup['model_types'][regioni]
+        x = paramSetup["x"][regioni]
+        y = paramSetup["y"][regioni]
+        headmod = paramSetup["modelheader"][regioni]
+        nlens = paramSetup["nlens_regions"][regioni]
+        nsource = paramSetup["nsource_regions"][regioni]
+        model_types = paramSetup["model_types"][regioni]
 
         # get pzero, p_u, and p_l for this specific model
         nparlens = 5 * nlens
@@ -183,14 +183,14 @@ def lnlike(pzero_regions, vis_complex, wgt, uuu, vvv, pcd,
         parameters = parameters_regions[npar_previous:npar]
         npar_previous = npar
 
-        #-----------------------------------------------------------------
+        # -----------------------------------------------------------------
         # Create a surface brightness map of lensed emission for the given set
         # of foreground lens(es) and background source parameters.
-        #-----------------------------------------------------------------
+        # -----------------------------------------------------------------
 
-        g_image, g_lensimage, e_image, e_lensimage, amp_tot, amp_mask = \
-                lensutil.sbmap(x, y, nlens, nsource, parameters, model_types,
-                computeamp=computeamp)
+        g_image, g_lensimage, e_image, e_lensimage, amp_tot, amp_mask = lensutil.sbmap(
+            x, y, nlens, nsource, parameters, model_types, computeamp=computeamp
+        )
         e_image_all += e_image
         e_lensimage_all += e_lensimage
         g_image_all += g_image
@@ -227,34 +227,40 @@ def lnlike(pzero_regions, vis_complex, wgt, uuu, vvv, pcd,
     if miriad:
         # save the fits image of the lensed source
         ptag = str(os.getpid())
-        SBmapLoc = 'LensedSBmap' + ptag + '.fits'
+        SBmapLoc = "LensedSBmap" + ptag + ".fits"
         fits.writeto(SBmapLoc, g_lensimage_all, header=headmod, clobber=True)
 
         # convert fits format to miriad format
-        SBmapMiriad = 'LensedSBmap' + ptag + '.miriad'
-        os.system('rm -rf ' + SBmapMiriad)
-        cmd = 'fits op=xyin in=' + SBmapLoc + ' out=' + SBmapMiriad
-        call(cmd + ' > /dev/null 2>&1', shell=True)
+        SBmapMiriad = "LensedSBmap" + ptag + ".miriad"
+        os.system("rm -rf " + SBmapMiriad)
+        cmd = "fits op=xyin in=" + SBmapLoc + " out=" + SBmapMiriad
+        call(cmd + " > /dev/null 2>&1", shell=True)
 
         # compute simulated visibilities
-        modelvisfile = 'SimulatedVisibilities' + ptag + '.miriad'
-        call('rm -rf ' + modelvisfile, shell=True)
-        cmd = 'uvmodel options=subtract vis=' + visfilemiriad + \
-                ' model=' + SBmapMiriad + ' out=' + modelvisfile
-        call(cmd + ' > /dev/null 2>&1', shell=True)
+        modelvisfile = "SimulatedVisibilities" + ptag + ".miriad"
+        call("rm -rf " + modelvisfile, shell=True)
+        cmd = (
+            "uvmodel options=subtract vis="
+            + visfilemiriad
+            + " model="
+            + SBmapMiriad
+            + " out="
+            + modelvisfile
+        )
+        call(cmd + " > /dev/null 2>&1", shell=True)
 
         # convert simulated visibilities to uvfits format
-        mvuvfits = 'SimulatedVisibilities' + ptag + '.uvfits'
-        call('rm -rf ' + mvuvfits, shell=True)
-        cmd = 'fits op=uvout in=' + modelvisfile + ' out=' + mvuvfits
-        call(cmd + ' > /dev/null 2>&1', shell=True)
+        mvuvfits = "SimulatedVisibilities" + ptag + ".uvfits"
+        call("rm -rf " + mvuvfits, shell=True)
+        cmd = "fits op=uvout in=" + modelvisfile + " out=" + mvuvfits
+        call(cmd + " > /dev/null 2>&1", shell=True)
 
         # read simulated visibilities
         mvuv = fits.open(mvuvfits)
-        diff_real = mvuv[0].data['DATA'][:, 0, 0, 0, 0, 0]
-        diff_imag = mvuv[0].data['DATA'][:, 0, 0, 0, 0, 1]
-        wgt = mvuv[0].data['DATA'][:, 0, 0, 0, 0, 2]
-        #model_complex = model_real[goodvis] + 1.0j * model_imag[goodvis]
+        diff_real = mvuv[0].data["DATA"][:, 0, 0, 0, 0, 0]
+        diff_imag = mvuv[0].data["DATA"][:, 0, 0, 0, 0, 1]
+        wgt = mvuv[0].data["DATA"][:, 0, 0, 0, 0, 2]
+        # model_complex = model_real[goodvis] + 1.0j * model_imag[goodvis]
         diff_all = numpy.append(diff_real, diff_imag)
         wgt = numpy.append(wgt, wgt)
         goodvis = wgt > 0
@@ -262,63 +268,63 @@ def lnlike(pzero_regions, vis_complex, wgt, uuu, vvv, pcd,
         wgt = wgt[goodvis]
         chi2_all = wgt * diff_all * diff_all
     else:
-        model_complex = sample_vis.uvmodel(g_lensimage_all, headmod, 
-                uuu, vvv, pcd)
+        model_complex = sample_vis.uvmodel(g_lensimage_all, headmod, uuu, vvv, pcd)
         diff_all = numpy.abs(vis_complex - model_complex)
         chi2_all = wgt * diff_all * diff_all
-    #model_real += numpy.real(model_complex)
-    #model_imag += numpy.imag(model_complex)
+    # model_real += numpy.real(model_complex)
+    # model_imag += numpy.imag(model_complex)
 
-    #fits.writeto('g_lensimage.fits', g_lensimage_all, headmod, clobber=True)
-    #import matplotlib.pyplot as plt
-    #print(pzero_regions)
-    #plt.imshow(g_lensimage, origin='lower')
-    #plt.colorbar()
-    #plt.show()
-    #plt.imshow(g_image, origin='lower')
-    #plt.colorbar()
-    #plt.show()
+    # fits.writeto('g_lensimage.fits', g_lensimage_all, headmod, clobber=True)
+    # import matplotlib.pyplot as plt
+    # print(pzero_regions)
+    # plt.imshow(g_lensimage, origin='lower')
+    # plt.colorbar()
+    # plt.show()
+    # plt.imshow(g_image, origin='lower')
+    # plt.colorbar()
+    # plt.show()
 
     # calculate chi^2 assuming natural weighting
-    #fnuisance = 0.0
-    #modvariance_real = 1 / wgt #+ fnuisance ** 2 * model_real ** 2
-    #modvariance_imag = 1 / wgt #+ fnuisance ** 2 * model_imag ** 2
-    #wgt = wgt / 4.
-    #chi2_real_all = (real - model_real) ** 2. / modvariance_real
-    #chi2_imag_all = (imag - model_imag) ** 2. / modvariance_imag
-    #chi2_all = numpy.append(chi2_real_all, chi2_imag_all)
-    
+    # fnuisance = 0.0
+    # modvariance_real = 1 / wgt #+ fnuisance ** 2 * model_real ** 2
+    # modvariance_imag = 1 / wgt #+ fnuisance ** 2 * model_imag ** 2
+    # wgt = wgt / 4.
+    # chi2_real_all = (real - model_real) ** 2. / modvariance_real
+    # chi2_imag_all = (imag - model_imag) ** 2. / modvariance_imag
+    # chi2_all = numpy.append(chi2_real_all, chi2_imag_all)
+
     # compute the sigma term
-    #sigmaterm_real = numpy.log(2 * numpy.pi / wgt)
-    #sigmaterm_imag = numpy.log(2 * numpy.pi * modvariance_imag)
+    # sigmaterm_real = numpy.log(2 * numpy.pi / wgt)
+    # sigmaterm_imag = numpy.log(2 * numpy.pi * modvariance_imag)
 
     # compute the ln likelihood
-    lnlikemethod = paramSetup['lnlikemethod']
-    if lnlikemethod == 'chi2':
+    lnlikemethod = paramSetup["lnlikemethod"]
+    if lnlikemethod == "chi2":
         lnlike = chi2_all
     else:
         sigmaterm_all = 2 * numpy.log(2 * numpy.pi / wgt)
         lnlike = chi2_all + sigmaterm_all
 
     # compute number of degrees of freedom
-    #nmeasure = lnlike.size
-    #nparam = (pzero != 0).size
-    #ndof = nmeasure - nparam
+    # nmeasure = lnlike.size
+    # nparam = (pzero != 0).size
+    # ndof = nmeasure - nparam
 
     # assert that lnlike is equal to -1 * maximum likelihood estimate
     # use visibilities where weight is greater than 0
-    #goodvis = wgt > 0
-    #likeln = -0.5 * lnlike[goodvis].sum()
+    # goodvis = wgt > 0
+    # likeln = -0.5 * lnlike[goodvis].sum()
     likeln = -0.5 * lnlike.sum()
-    #print(pcd, likeln)
+    # print(pcd, likeln)
     if likeln * 0 != 0:
         likeln = -numpy.inf
 
     return likeln, amp
 
-def lnprob(pzero_regions, vis_complex, wgt, uuu, vvv, pcd, 
-           fixindx, paramSetup, computeamp=True):
 
+def lnprob(
+    pzero_regions, vis_complex, wgt, uuu, vvv, pcd, fixindx, paramSetup, computeamp=True
+):
     """
 
     Computes ln probabilities via ln prior + ln likelihood
@@ -332,35 +338,44 @@ def lnprob(pzero_regions, vis_complex, wgt, uuu, vvv, pcd,
         mu = 1
         return probln, mu
 
-    ll, mu = lnlike(pzero_regions, vis_complex, wgt, uuu, vvv, pcd, 
-           fixindx, paramSetup, computeamp=computeamp)
+    ll, mu = lnlike(
+        pzero_regions,
+        vis_complex,
+        wgt,
+        uuu,
+        vvv,
+        pcd,
+        fixindx,
+        paramSetup,
+        computeamp=computeamp,
+    )
 
-    normalization = 1.0#2 * real.size
+    normalization = 1.0  # 2 * real.size
     probln = lp * normalization + ll
-    #print(probln, lp*normalization, ll)
-    
+    # print(probln, lp*normalization, ll)
+
     return probln, mu
 
-configloc = 'config.yaml'
-configfile = open(configloc, 'r')
-config = yaml.load(configfile)
+
+configloc = "config.yaml"
+configfile = open(configloc, "r")
+config = yaml.safe_load(configfile)
 
 
 # Determine if we are going to compute the amplification of every model
-if list(config.keys()).count('ComputeAmp') > 0:
-    computeamp = config['ComputeAmp']
+if list(config.keys()).count("ComputeAmp") > 0:
+    computeamp = config["ComputeAmp"]
 else:
     computeamp = True
 
 # Determine parallel processing options
-if list(config.keys()).count('MPI') > 0:
-    mpi = config['MPI']
+if list(config.keys()).count("MPI") > 0:
+    mpi = config["MPI"]
 else:
     mpi = False
 
 # multiple processors on a cluster using MPI
 if mpi:
-
     from emcee.utils import MPIPool
 
     # One thread per slot
@@ -376,40 +391,39 @@ if mpi:
 
 # Single processor with Nthreads cores
 else:
-
-    if list(config.keys()).count('Nthreads') > 0:
+    if list(config.keys()).count("Nthreads") > 0:
         # set the number of threads to use for parallel processing
-        Nthreads = config['Nthreads']
+        Nthreads = config["Nthreads"]
     else:
         Nthreads = 1
 
     # Initialize the pool object
-    pool = ''
+    pool = ""
 
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Read in ALMA image and beam
-#im = fits.getdata(config['ImageName'])
-#im = im[0, 0, :, :].copy()
-headim = fits.getheader(config['ImageName'])
+# im = fits.getdata(config['ImageName'])
+# im = im[0, 0, :, :].copy()
+headim = fits.getheader(config["ImageName"])
 
 # get resolution in ALMA image
-#celldata = numpy.abs(headim['CDELT1'] * 3600)
+# celldata = numpy.abs(headim['CDELT1'] * 3600)
 
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # read in visibility data
-visfile = config['UVData']
+visfile = config["UVData"]
 
 # Determine if we will use miriad to compute simulated visibilities
-if list(config.keys()).count('UseMiriad') > 0:
-    miriad = config['UseMiriad']
+if list(config.keys()).count("UseMiriad") > 0:
+    miriad = config["UseMiriad"]
 
     if miriad == True:
         interactive = False
-        index = visfile.index('uvfits')
-        visfilemiriad = visfile[0:index] + 'miriad'
+        index = visfile.index("uvfits")
+        visfilemiriad = visfile[0:index] + "miriad"
 
         # scale the weights
-        newvisfile = visfile[0:index] + 'scaled.uvfits'
+        newvisfile = visfile[0:index] + "scaled.uvfits"
         uvutil.scalewt(visfile, newvisfile)
         visfile = newvisfile
     else:
@@ -420,7 +434,7 @@ else:
 # attempt to process multiple visibility files.  This won't work if miriad=True
 try:
     filetype = visfile[-6:]
-    if filetype == 'uvfits':
+    if filetype == "uvfits":
         uvfits = True
     else:
         uvfits = False
@@ -431,7 +445,7 @@ except:
     try:
         for i, ivisfile in enumerate(visfile):
             filetype = ivisfile[-6:]
-            if filetype == 'uvfits':
+            if filetype == "uvfits":
                 uvfits = True
             else:
                 uvfits = False
@@ -450,16 +464,23 @@ except:
                 if ipcd != pcd:
                     data1 = visfile[0]
                     data2 = visfile[ivisfile]
-                    msg = 'Phase centers in ' + data1 + ' and ' + data2 \
-                            + ' do not match.  Please ensure phase ' \
-                            + 'centers in all visibility datasets are equal.'
+                    msg = (
+                        "Phase centers in "
+                        + data1
+                        + " and "
+                        + data2
+                        + " do not match.  Please ensure phase "
+                        + "centers in all visibility datasets are equal."
+                    )
                     print(msg)
                     raise TypeError
                 vis_complex = numpy.append(vis_complex, ivis_complex)
                 wgt = numpy.append(wgt, iwgt)
     except:
-        msg = "Visibility datasets must be specified as either a string or "\
-                "a list of strings."
+        msg = (
+            "Visibility datasets must be specified as either a string or "
+            "a list of strings."
+        )
         print(msg)
         raise TypeError
 
@@ -470,28 +491,26 @@ vis_complex = vis_complex[positive_definite]
 wgt = wgt[positive_definite]
 uuu = uuu[positive_definite]
 vvv = vvv[positive_definite]
-#www = www[positive_definite]
+# www = www[positive_definite]
 
 npos = wgt.size
 
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Load input parameters
 paramSetup = setuputil.loadParams(config)
-nwalkers = paramSetup['nwalkers']
-nregions = paramSetup['nregions']
-nparams = paramSetup['nparams']
-pname = paramSetup['pname']
-nsource_regions = paramSetup['nsource_regions']
+nwalkers = paramSetup["nwalkers"]
+nregions = paramSetup["nregions"]
+nparams = paramSetup["nparams"]
+pname = paramSetup["pname"]
+nsource_regions = paramSetup["nsource_regions"]
 
 # Use an intermediate posterior PDF to initialize the walkers if it exists
-posteriorloc = 'posteriorpdf.fits'
+posteriorloc = "posteriorpdf.fits"
 if os.path.exists(posteriorloc):
-
     # read the latest posterior PDFs
     print("Found existing posterior PDF file: {:s}".format(posteriorloc))
     posteriordat = Table.read(posteriorloc)
     if len(posteriordat) > 1:
-
         # assign values to pzero
         nlnprob = 1
         pzero = numpy.zeros((nwalkers, nparams))
@@ -511,54 +530,62 @@ else:
     realpdf = False
 
 if not realpdf:
-    extendedpname = ['lnprob']
+    extendedpname = ["lnprob"]
     extendedpname.extend(pname)
     nmu = 0
     for regioni in range(nregions):
         ri = str(regioni)
-        if paramSetup['nlens_regions'][regioni] > 0:
+        if paramSetup["nlens_regions"][regioni] > 0:
             nsource = nsource_regions[regioni]
             for i in range(nsource):
-                si = '.Source' + str(i) + '.Region' + ri
-                extendedpname.append('mu_tot' + si) 
+                si = ".Source" + str(i) + ".Region" + ri
+                extendedpname.append("mu_tot" + si)
                 nmu += 1
             for i in range(nsource):
-                si = '.Source' + str(i) + '.Region' + ri
-                extendedpname.append('mu_aper' + si) 
+                si = ".Source" + str(i) + ".Region" + ri
+                extendedpname.append("mu_aper" + si)
                 nmu += 1
-            extendedpname.append('mu_tot.Region' + ri)
-            extendedpname.append('mu_aper.Region' + ri) 
+            extendedpname.append("mu_tot.Region" + ri)
+            extendedpname.append("mu_aper.Region" + ri)
             nmu += 2
-    posteriordat = Table(names = extendedpname)
-    pzero = numpy.array(paramSetup['pzero'])
+    posteriordat = Table(names=extendedpname)
+    pzero = numpy.array(paramSetup["pzero"])
 
 # make sure no parts of pzero exceed p_u or p_l
-#arrayp_u = numpy.array(p_u)
-#arrayp_l = numpy.array(p_l)
-#for j in range(nwalkers):
+# arrayp_u = numpy.array(p_u)
+# arrayp_l = numpy.array(p_l)
+# for j in range(nwalkers):
 #    exceed = arraypzero[j] >= arrayp_u
 #    arraypzero[j, exceed] = 2 * arrayp_u[exceed] - arraypzero[j, exceed]
 #    exceed = arraypzero[j] <= arrayp_l
 #    arraypzero[j, exceed] = 2 * arrayp_l[exceed] - arraypzero[j, exceed]
-#pzero = arraypzero
-#p_u = arrayp_u
-#p_l = arrayp_l
+# pzero = arraypzero
+# p_u = arrayp_u
+# p_l = arrayp_l
 
 # determine the indices for fixed parameters
 fixindx = setuputil.fixParams(paramSetup)
 
 # Initialize the sampler with the chosen specs.
 if mpi:
-    sampler = emcee.EnsembleSampler(nwalkers, nparams, lnprob, pool=pool, \
-        args=[vis_complex, wgt, uuu, vvv, pcd, \
-        fixindx, paramSetup, computeamp])
+    sampler = emcee.EnsembleSampler(
+        nwalkers,
+        nparams,
+        lnprob,
+        pool=pool,
+        args=[vis_complex, wgt, uuu, vvv, pcd, fixindx, paramSetup, computeamp],
+    )
 else:
-    sampler = emcee.EnsembleSampler(nwalkers, nparams, lnprob, \
-        args=[vis_complex, wgt, uuu, vvv, pcd, \
-        fixindx, paramSetup, computeamp], threads=Nthreads)
+    sampler = emcee.EnsembleSampler(
+        nwalkers,
+        nparams,
+        lnprob,
+        args=[vis_complex, wgt, uuu, vvv, pcd, fixindx, paramSetup, computeamp],
+        threads=Nthreads,
+    )
 
 # Sample, outputting to a file
-#os.system('date')
+# os.system('date')
 currenttime = time.time()
 
 # pos is the position of the sampler
@@ -566,22 +593,25 @@ currenttime = time.time()
 # state the random number generator state
 # amp the metadata 'blobs' associated with the current positoni
 for pos, prob, state, amp in sampler.sample(pzero, iterations=10000):
-
-    print("Mean acceptance fraction: {:f}".
-            format(numpy.mean(sampler.acceptance_fraction)), 
-            "\nMean lnprob and Max lnprob values: {:f} {:f}".
-            format(numpy.mean(prob), numpy.max(prob)),
-            "\nTime to run previous set of walkers (seconds): {:f}".
-            format(time.time() - currenttime))
+    print(
+        "Mean acceptance fraction: {:f}".format(
+            numpy.mean(sampler.acceptance_fraction)
+        ),
+        "\nMean lnprob and Max lnprob values: {:f} {:f}".format(
+            numpy.mean(prob), numpy.max(prob)
+        ),
+        "\nTime to run previous set of walkers (seconds): {:f}".format(
+            time.time() - currenttime
+        ),
+    )
     currenttime = time.time()
-    #ff.write(str(prob))
+    # ff.write(str(prob))
     superpos = numpy.zeros(1 + nparams + nmu)
 
     for wi in range(nwalkers):
         superpos[0] = prob[wi]
-        superpos[1:nparams + 1] = pos[wi]
-        superpos[nparams + 1:nparams + nmu + 1] = amp[wi]
+        superpos[1 : nparams + 1] = pos[wi]
+        superpos[nparams + 1 : nparams + nmu + 1] = amp[wi]
         posteriordat.add_row(superpos)
-    posteriordat.write('posteriorpdf.fits', overwrite=True)
-    #posteriordat.write('posteriorpdf.txt', format='ascii')
-
+    posteriordat.write("posteriorpdf.fits", overwrite=True)
+    # posteriordat.write('posteriorpdf.txt', format='ascii')
