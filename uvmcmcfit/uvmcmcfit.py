@@ -133,7 +133,16 @@ def lnprior(pzero_regions, paramSetup):
 
 
 def lnlike(
-    pzero_regions, vis_complex, wgt, uuu, vvv, pcd, fixindx, paramSetup, computeamp=True
+    pzero_regions,
+    vis_complex,
+    wgt,
+    uuu,
+    vvv,
+    pcd,
+    fixindx,
+    paramSetup,
+    computeamp=True,
+    miriad=False,
 ):
     """Function that computes the Ln likelihood of the data"""
 
