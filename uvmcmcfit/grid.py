@@ -527,9 +527,9 @@ def spheroid(eta, m, alpha, p, q):
         x = eta * eta - etalim[m - 4] * etalim[m - 4]
 
     # - Get numerator via Horners rule:
-    np = nnum[m - 4] - 1
-    num = p[np, twoalp, m - 4, ip]
-    for i in range(np - 1, -1, -1):
+    npo = nnum[m - 4] - 1
+    num = p[npo, twoalp, m - 4, ip]
+    for i in range(npo - 1, -1, -1):
         num = num * x + p[i, twoalp, m - 4, ip]
 
     # - Get denominator via Horners rule"
