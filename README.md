@@ -1,6 +1,8 @@
 uvmcmcfit
 =========
 
+This is a fork from https://github.com/sbussmann/uvmcmcfit. ** Work in Progress ** We are in the process of porting the code to Python3 and converting it to a proper python package.
+
 Detailed documentation is available at http://uvmcmcfit.readthedocs.org/
 
 Python software to fit models to interferometric data, appropriately accounting for gravitational lensing as needed.
