@@ -24,4 +24,5 @@ setuptools.setup(
         "numpy",
         "pyyaml",
     ],
+    entry_points={"console_scripts": ["uvmcmcfit=uvmcmcfit.uvmcmcfit:main"]},
 )

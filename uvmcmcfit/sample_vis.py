@@ -205,8 +205,8 @@ def uvmodel(model, modelheader, u, v, pcd):
     ln2 = np.log(2)
     nxd = 2 ** np.ceil(np.log(2.0 * nx) / ln2)  # - padding w/ zeros
     nyd = 2 ** np.ceil(np.log(2.0 * ny) / ln2)  # - padding w/ zeros
-    nxd = np.int6464(nxd)
-    nyd = np.int6464(nyd)
+    nxd = np.int64(nxd)
+    nyd = np.int64(nyd)
     dx = modelheader["CDELT1"] * pi / 180  # - pixel size in radians
     dy = modelheader["CDELT2"] * pi / 180  # - pixel size in radians
     du = 1.0 / (dx * nxd)  # - size of u cell
