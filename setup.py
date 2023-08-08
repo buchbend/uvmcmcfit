@@ -19,7 +19,7 @@ setuptools.setup(
     python_requires=">=3.6",
     install_requires=[
         "astropy",
-        "emcee",
+        "emcee==2.1.0",
         "matplotlib",
         "numpy",
         "pyyaml",
